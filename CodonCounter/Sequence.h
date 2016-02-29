@@ -22,6 +22,7 @@ private:
     QString textSequence;
     QString reverseComplement;
     QString Sequence::_calculateReverseComplement();
+    void Sequence::_findORFs();
 
 };
 

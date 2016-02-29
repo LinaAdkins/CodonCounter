@@ -5,7 +5,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) , ui(new Ui::MainW
 {
     ui->setupUi(this);
 
-    // Find and connect our file select button
+    // Connect up our controls
     mFileSelectButton = this->findChild<QPushButton*>("btnFileSelect");
     connect( mFileSelectButton , SIGNAL(released()) , this , SLOT(HandleFileSelectBtn()) );
     mPathLineEdit = this->findChild<QLineEdit*>("lnFilePath");
@@ -28,7 +28,7 @@ void MainWindow::HandleFileSelectBtn()
     LoadSequences(fileName);
 
     for( Sequence& s : mSequenceList ){
-        qDebug() << s.ToString();
+        // Nothing yet
     }
 
 }
