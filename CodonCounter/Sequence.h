@@ -11,10 +11,17 @@
 class Sequence
 {
 public:
+    struct ORF{
+        QString text;
+        int startpos;
+        int endpos;
+    };
+
     Sequence::Sequence();
     Sequence::Sequence( QString title , QString seq );
     Sequence::~Sequence();
     QString ToString();
+    QList<ORF> mORFs;
 
 
 private:
