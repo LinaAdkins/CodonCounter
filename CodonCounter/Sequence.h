@@ -12,9 +12,11 @@ class Sequence
 {
 public:
     struct ORF{
+        ORF() : text("") , startpos(0) , endpos(0) , frame(-10) {}
         QString text;
         int startpos;
         int endpos;
+        int frame;
     };
 
     Sequence::Sequence();
@@ -29,7 +31,7 @@ private:
     QString textSequence;
     QString reverseComplement;
     QString Sequence::_calculateReverseComplement();
-    void Sequence::_findORFs();
+    void Sequence::_findORFs( int minimumLength );
 
 };
 

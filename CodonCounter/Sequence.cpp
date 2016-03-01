@@ -7,7 +7,7 @@ Sequence::~Sequence(){}
 Sequence::Sequence( QString title , QString seq ) : title(title) , textSequence(seq)
 {
     reverseComplement = this->_calculateReverseComplement();
-    this->_findORFs();
+    this->_findORFs(1);
 }
 
 /// Gets the reverse complement of this DNA sequence
@@ -60,62 +60,83 @@ QString Sequence::_calculateReverseComplement(){
 }
 
 /// Get the positions of ORFs for this sequence by checking frames
-void Sequence::_findORFs()
+void Sequence::_findORFs( int minimumLength )
 {
-
-    // Keep states for gene parsing
-    bool s1_inORF = false;
+    // Clear previous ORF results
+    mORFs.clear();
 
     // Store our temporary ORF info
-    ORF s1_ORF; ORF s2_ORF; ORF s3_ORF;
+    bool frame_in_orf[] = { false , false , false , false , false , false }; // keep track of each frame - 0-2 = +1, +2 , +3 3-5 = -1 , -2 , -3
+    ORF frame_current_orf[] = { ORF() , ORF() , ORF() , ORF() , ORF() , ORF() };
 
+    QString neg1 = "";
+    // Loop through our sequence in triplets
     int div3 = textSequence.length()/3;
-
     for( int i = 0; i < div3; i++ ){
 
-        // +1 , +2 , +3
-        QString f1 = textSequence.mid(i*3 , 3);
+        // Loop through frames
+        for( int j = 0; j <= 5; j++){
+            int currIndex = 0;
+            QString triple = "";
 
-        // Actions for when we are in a potential orf
-        if(s1_inORF){
-
-            // Since we thought we were already in an ORF and we've hit a start codon, clear our orf stats for now.
-            if(f1 == "ATG"){
-                s1_ORF.text = "";
-                s1_ORF.startpos = i*3;
+            // Adjust our indexes based on whether we are using direct strand or reverse complement
+            if( j < 3 ){
+                currIndex = (i*3)+j;
+                triple  = textSequence.mid(currIndex , 3);
             }
-            else if(f1.contains(QRegExp("(TAA|TAG|TGA|taa|tag|tga)")) ){
-                s1_inORF = false;
-                s1_ORF.endpos = i*3+3;
-
-                qDebug() << "ORF: " + s1_ORF.text + " startpos: " + QString::number(s1_ORF.startpos) + " endpos: " + QString::number(s1_ORF.endpos);
+            else
+            {
+                currIndex = (i*3)+(j-3);
+                triple = reverseComplement.mid(currIndex , 3);
             }
-            else{
-                s1_ORF.text  += f1 + " ";
+
+            if(frame_in_orf[j]){
+
+                // Found STOP codon, writing ORF
+                if(triple.contains(QRegExp("(TAA|TAG|TGA|taa|tag|tga)"))){
+                    if( frame_current_orf[j].text.length() > 6 + minimumLength ){
+                        frame_in_orf[j] = false;
+                        frame_current_orf[j].endpos = currIndex+3; // frame + end of triplet
+                        frame_current_orf[j].text += triple;
+
+                        // Adjust our frame to match proper frame numbering
+                        if( j < 3){
+                            frame_current_orf[j].frame = j+1;
+                        }
+                        else
+                        {
+                            frame_current_orf[j].frame = -j+2;
+                        }
+
+                        mORFs.append(frame_current_orf[j]);
+                        frame_current_orf[j] = ORF();
+                     }
+                }
+                // We are in an ORF, so keep on cat-ing text
+                else
+                {
+                    frame_current_orf[j].text += triple;
+                }
+
+            }
+            else if(!frame_in_orf[j])
+            {
+                // We aren't in an ORF and we found a start tag, so now we are!
+                if(triple.contains(QRegExp("(ATG|atg)")) ){
+                    frame_in_orf[j] = true;
+                    frame_current_orf[j].startpos = currIndex;
+                    frame_current_orf[j].text = triple;
+                }
             }
         }
-        else if( !s1_inORF ){
-            if(f1.contains(QRegExp("(ATG|atg)")) ) {
-                s1_inORF = true;
-                s1_ORF.startpos = i*3;
-                qDebug() << "FOUND ATG TAG!";
-            }
-        }
-
-       /* s1 += textSequence.mid(i*3 , 3) + " ";
-        s2 += textSequence.mid((i*3)+1, 3) + " ";
-        s3 += textSequence.mid((i*3)+2 , 3 ) + " ";
-
-        // -1 , -2 , -3
-        r1 += reverseComplement.mid(i*3 , 3) + " ";
-        r2 += reverseComplement.mid((i*3)+1, 3) + " ";
-        r3 += reverseComplement.mid((i*3)+2 , 3 ) + " ";*/
-
-
-
     }
 
-    qDebug() << "------------------------";
+    qDebug() << "----------------";
+    for(int k = 0; k < mORFs.length() ; k++ )
+    {
+        qDebug() << "ORF: " << mORFs[k].frame << " " << mORFs[k].text << " " << mORFs[k].startpos << " " << mORFs[k].endpos;
+    }
+
 
 }
 
