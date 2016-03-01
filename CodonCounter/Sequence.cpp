@@ -8,6 +8,7 @@ Sequence::Sequence( QString title , QString seq ) : title(title) , textSequence(
 {
     reverseComplement = this->_calculateReverseComplement();
     this->_findORFs(1);
+    this->_countCodonsInORFs();
 }
 
 /// Gets the reverse complement of this DNA sequence
@@ -69,7 +70,6 @@ void Sequence::_findORFs( int minimumLength )
     bool frame_in_orf[] = { false , false , false , false , false , false }; // keep track of each frame - 0-2 = +1, +2 , +3 3-5 = -1 , -2 , -3
     ORF frame_current_orf[] = { ORF() , ORF() , ORF() , ORF() , ORF() , ORF() };
 
-    QString neg1 = "";
     // Loop through our sequence in triplets
     int div3 = textSequence.length()/3;
     for( int i = 0; i < div3; i++ ){
@@ -148,4 +148,22 @@ QString Sequence::ToString(){
       + "RComplement: " + this->reverseComplement + "\r\n";
 
     return s;
+}
+
+/// Count codons inside ORFs
+void Sequence::_countCodonsInORFs(){
+    for( int i = 0; i < mORFs.length() ; i++ ){
+        int len = mORFs[i].text.length()/3;
+
+        // Loop through ORF string and store codons in triples
+        for( int j = 0; j < len; j++ ){
+            QString triple = mORFs[i].text.mid(j*3 , 3);
+            mCodonOccurrences[ triple ] += 1;
+        }
+    }
+
+    for( auto key: mCodonOccurrences.keys() )
+    {
+        qDebug() << key << " : " << mCodonOccurrences.value(key);
+    }
 }
