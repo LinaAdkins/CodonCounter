@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>412</width>
-    <height>570</height>
+    <width>1032</width>
+    <height>547</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,9 +17,9 @@
    <widget class="QPushButton" name="btnFileSelect">
     <property name="geometry">
      <rect>
-      <x>290</x>
-      <y>30</y>
-      <width>75</width>
+      <x>10</x>
+      <y>10</y>
+      <width>151</width>
       <height>23</height>
      </rect>
     </property>
@@ -30,20 +30,20 @@
    <widget class="QLineEdit" name="lnFilePath">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>30</y>
-      <width>261</width>
+      <x>170</x>
+      <y>10</y>
+      <width>341</width>
       <height>20</height>
      </rect>
     </property>
    </widget>
-   <widget class="QGraphicsView" name="gfx_Chart">
+   <widget class="QCustomPlot" name="plotCodons" native="true">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>60</y>
-      <width>341</width>
-      <height>441</height>
+      <x>10</x>
+      <y>40</y>
+      <width>1011</width>
+      <height>451</height>
      </rect>
     </property>
    </widget>
@@ -53,7 +53,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>412</width>
+     <width>1032</width>
      <height>21</height>
     </rect>
    </property>
@@ -81,6 +81,14 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>QCustomPlot</class>
+   <extends>QWidget</extends>
+   <header>qcustomplot.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

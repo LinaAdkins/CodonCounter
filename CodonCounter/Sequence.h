@@ -23,6 +23,7 @@ public:
     Sequence::Sequence( QString title , QString seq );
     Sequence::~Sequence();
     QString ToString();
+    QMap< QString , int > mCodonOccurrences;
 
 
 
@@ -34,7 +35,7 @@ private:
     void Sequence::_findORFs( int minimumLength );
     void Sequence::_countCodonsInORFs();
     QList<ORF> mORFs;
-    QMap< QString , int > mCodonOccurrences;
+
 
 };
 

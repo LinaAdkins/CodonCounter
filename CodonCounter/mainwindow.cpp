@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
@@ -9,6 +10,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) , ui(new Ui::MainW
     mFileSelectButton = this->findChild<QPushButton*>("btnFileSelect");
     connect( mFileSelectButton , SIGNAL(released()) , this , SLOT(HandleFileSelectBtn()) );
     mPathLineEdit = this->findChild<QLineEdit*>("lnFilePath");
+    mPlotCodons = this->findChild<QCustomPlot*>("plotCodons");
+    this->SetupGraph();
 }
 
 MainWindow::~MainWindow()
@@ -27,10 +30,7 @@ void MainWindow::HandleFileSelectBtn()
 
     LoadSequences(fileName);
 
-    for( Sequence& s : mSequenceList ){
-        // Nothing yet
-    }
-
+    this->BindGraphToSequence(mSequenceList[0] );
 }
 
 
@@ -75,4 +75,56 @@ void MainWindow::LoadSequences( QString fileName ){
     f.close();
 }
 
+/// Set up initial styling for plot
+void MainWindow::SetupGraph(){
+
+    // Set up our plot
+    QCPBars* numCodons = new QCPBars( mPlotCodons->xAxis , mPlotCodons->yAxis );
+    mPlotCodons->addPlottable(numCodons);
+
+    // Setup xAxis
+    mPlotCodons->xAxis->setAutoTicks(false);
+    mPlotCodons->xAxis->setAutoTickLabels(false);
+    mPlotCodons->xAxis->setTickLabelRotation(60);
+    mPlotCodons->xAxis->setSubTickCount(0);
+    mPlotCodons->xAxis->setTickLength(0,4);
+    mPlotCodons->xAxis->grid()->setVisible(true);
+
+    // Interactions
+    mPlotCodons->setInteractions( QCP::iRangeDrag | QCP::iRangeZoom );
+}
+
+/// Bind our graph to a sequence
+void MainWindow::BindGraphToSequence( Sequence s ){
+
+    // Grab our plottable from setup, we only have one so use that
+    QCPBars* numCodons = (QCPBars*)mPlotCodons->plottable(0);
+
+    // Get our data to bind
+    QVector<double> ticks;
+    QVector<QString> labels;
+    QVector<double> data;
+
+    int iter = 1;
+    for(auto e : s.mCodonOccurrences.keys())
+    {
+        ticks << iter;
+        labels << e;
+        data << s.mCodonOccurrences.value(e);
+
+        iter++;
+    }
+
+    // Set up our xaxis labels
+    mPlotCodons->xAxis->setTickVector(ticks);
+    mPlotCodons->xAxis->setTickVectorLabels(labels);
+    mPlotCodons->xAxis->setRange(0, labels.length());
+
+    // Bind our data
+    numCodons->setData( ticks , data );
+
+    // Refresh
+    mPlotCodons->rescaleAxes();
+    mPlotCodons->replot();
+}
 

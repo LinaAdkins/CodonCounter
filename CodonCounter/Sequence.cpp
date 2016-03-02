@@ -131,11 +131,11 @@ void Sequence::_findORFs( int minimumLength )
         }
     }
 
-    qDebug() << "----------------";
+  /*  qDebug() << "----------------";
     for(int k = 0; k < mORFs.length() ; k++ )
     {
         qDebug() << "ORF: " << mORFs[k].frame << " " << mORFs[k].text << " " << mORFs[k].startpos << " " << mORFs[k].endpos;
-    }
+    }*/
 
 
 }
@@ -162,8 +162,8 @@ void Sequence::_countCodonsInORFs(){
         }
     }
 
-    for( auto key: mCodonOccurrences.keys() )
+    /*for( auto key: mCodonOccurrences.keys() )
     {
         qDebug() << key << " : " << mCodonOccurrences.value(key);
-    }
+    }*/
 }

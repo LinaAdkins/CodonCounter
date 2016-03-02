@@ -5,8 +5,7 @@
 #-------------------------------------------------
 
 QT       += core gui
-
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
 TARGET = CodonCounter
 TEMPLATE = app
@@ -14,9 +13,11 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    Sequence.cpp
+        Sequence.cpp \
+        qcustomplot.cpp
 
 HEADERS  += mainwindow.h \
-    Sequence.h
+         Sequence.h \
+         qcustomplot.h
 
 FORMS    += mainwindow.ui
