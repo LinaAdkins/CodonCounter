@@ -23,7 +23,7 @@ public:
     Sequence::Sequence( QString title , QString seq );
     Sequence::~Sequence();
     QString ToString();
-    QList<ORF> mORFs;
+
 
 
 private:
@@ -32,6 +32,9 @@ private:
     QString reverseComplement;
     QString Sequence::_calculateReverseComplement();
     void Sequence::_findORFs( int minimumLength );
+    void Sequence::_countCodonsInORFs();
+    QList<ORF> mORFs;
+    QMap< QString , int > mCodonOccurrences;
 
 };
 
