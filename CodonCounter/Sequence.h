@@ -25,11 +25,12 @@ public:
     QString ToString();
     QMap< QString , int > mCodonOccurrences;
     static QList<QString> mAllCodons;
+    QString title;
 
 
 
 private:
-    QString title;
+
     QString textSequence;
     QString reverseComplement;
     QString Sequence::_calculateReverseComplement();
