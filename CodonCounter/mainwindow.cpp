@@ -5,11 +5,18 @@
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    this->setWindowTitle("Codon Counter");
 
-    // Connect up our controls
+    // File Opening Controls
+    mPathLineEdit = this->findChild<QLineEdit*>("lnFilePath");
     mFileSelectButton = this->findChild<QPushButton*>("btnFileSelect");
     connect( mFileSelectButton , SIGNAL(released()) , this , SLOT(HandleFileSelectBtn()) );
-    mPathLineEdit = this->findChild<QLineEdit*>("lnFilePath");
+
+    // Combobox
+    mComboSequence = this->findChild<QComboBox*>("comboSequence");
+    connect( mComboSequence , SIGNAL(currentIndexChanged(int)) , this , SLOT(ComboUpdate(int)) );
+
+    // Graph
     mPlotCodons = this->findChild<QCustomPlot*>("plotCodons");
     this->SetupGraph();
 }
@@ -30,7 +37,10 @@ void MainWindow::HandleFileSelectBtn()
 
     LoadSequences(fileName);
 
+    // Bind sequence to graph and combo
     this->BindGraphToSequence(mSequenceList[0] );
+    int index = mComboSequence->findData(0);
+    if( index != -1 ){ mComboSequence->setCurrentIndex(index); }
 }
 
 
@@ -51,6 +61,8 @@ void MainWindow::LoadSequences( QString fileName ){
 
     Sequence currSequence;
     QString currTitle = "";
+
+    mSequenceList.clear();
 
     // Loop through file
     QTextStream in(&f);
@@ -73,6 +85,15 @@ void MainWindow::LoadSequences( QString fileName ){
     }
 
     f.close();
+
+    // Populate our combo box
+    mComboSequence->clear();
+    for( int i = 0; i < mSequenceList.count(); i++ )
+    {
+
+        mComboSequence->addItem( mSequenceList[i].title , i  );
+
+    }
 }
 
 /// Set up initial styling for plot
@@ -89,6 +110,9 @@ void MainWindow::SetupGraph(){
     mPlotCodons->xAxis->setSubTickCount(0);
     mPlotCodons->xAxis->setTickLength(0,4);
     mPlotCodons->xAxis->grid()->setVisible(true);
+
+    mPlotCodons->yAxis->setPadding(3); // a bit more space to the left border
+    mPlotCodons->yAxis->setLabel("Number of Codons inside ORF sequences found");
 
     // Interactions
     mPlotCodons->setInteractions( QCP::iRangeDrag | QCP::iRangeZoom );
@@ -126,5 +150,22 @@ void MainWindow::BindGraphToSequence( Sequence s ){
     // Refresh
     mPlotCodons->rescaleAxes();
     mPlotCodons->replot();
+}
+
+/// Update event for our combo box
+void MainWindow::ComboUpdate( int i ){
+
+    if( i < 0){ return; }
+    if( mSequenceList.empty() ){ return; }
+
+    BindGraphToSequence( mSequenceList[i] );
+    /*for( int i = 0; i < mSequenceList.count(); i++){
+        if( mSequenceList[i].title == s){
+            BindGraphToSequence("")
+        }
+    }
+    mSequenceList[0].title == s;
+    BindGraphToSequence( mSequenceList[ mSequenceList.indexOf(s) ]);
+    qDebug() << " COMBOUPDATE" << s;*/
 }
 

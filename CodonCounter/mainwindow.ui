@@ -65,23 +65,16 @@
      </rect>
     </property>
    </widget>
-  </widget>
-  <widget class="QMenuBar" name="menuBar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>1050</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <widget class="QMenu" name="menuWhat_st_his">
-    <property name="title">
-     <string>File</string>
+   <widget class="QComboBox" name="comboSequence">
+    <property name="geometry">
+     <rect>
+      <x>790</x>
+      <y>10</y>
+      <width>251</width>
+      <height>22</height>
+     </rect>
     </property>
-    <addaction name="actionFile"/>
    </widget>
-   <addaction name="menuWhat_st_his"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">

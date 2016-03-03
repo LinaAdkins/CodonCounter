@@ -24,17 +24,20 @@ public:
     Sequence::~Sequence();
     QString ToString();
     QMap< QString , int > mCodonOccurrences;
+    static QList<QString> mAllCodons;
+    QString title;
 
 
 
 private:
-    QString title;
+
     QString textSequence;
     QString reverseComplement;
     QString Sequence::_calculateReverseComplement();
     void Sequence::_findORFs( int minimumLength );
     void Sequence::_countCodonsInORFs();
     QList<ORF> mORFs;
+    void Sequence::PopulateCodonDict();
 
 
 };

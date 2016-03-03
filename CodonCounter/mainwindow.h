@@ -25,8 +25,9 @@ class MainWindow : public QMainWindow
         explicit MainWindow(QWidget *parent = 0);
         ~MainWindow();
 
-    private slots:
+    public slots:
         void HandleFileSelectBtn();
+        void ComboUpdate( int );
 
     private:
         void LoadSequences( QString filename );
@@ -38,6 +39,7 @@ class MainWindow : public QMainWindow
         QLineEdit *mPathLineEdit;
         QList<Sequence> mSequenceList;
         QCustomPlot *mPlotCodons;
+        QComboBox* mComboSequence;
 
 };
 
