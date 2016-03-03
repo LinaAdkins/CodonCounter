@@ -9,6 +9,7 @@
 #include <QString>
 #include <QLineEdit>
 #include <QMessageBox>
+#include "qcustomplot.h"
 
 #include "Sequence.h"
 
@@ -29,11 +30,14 @@ class MainWindow : public QMainWindow
 
     private:
         void LoadSequences( QString filename );
+        void BindGraphToSequence( Sequence s );
+        void SetupGraph();
         Ui::MainWindow *ui;
         QPushButton *mFileSelectButton;
         QString fileName = "";
         QLineEdit *mPathLineEdit;
         QList<Sequence> mSequenceList;
+        QCustomPlot *mPlotCodons;
 
 };
 
