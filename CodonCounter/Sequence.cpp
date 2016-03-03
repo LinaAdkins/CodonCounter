@@ -3,12 +3,24 @@
 Sequence::Sequence(){}
 Sequence::~Sequence(){}
 
+QList<QString>Sequence::mAllCodons = QList<QString>()  << "TTT" << "TTC" << "TTA" << "TTG" << "CTT" << "CTC" << "CTA" << "CTG" <<
+                                                          "ATT" << "ATC" << "ATA" << "ATG" << "GTT" << "GTC" << "GTA" << "GTG" <<
+                                                          "TCT" << "TCC" << "TCA" << "TCG" << "CCT" << "CCC" << "CCA" << "CCG" <<
+                                                          "ACT" << "ACC" << "ACA" << "ACG" << "GCT" << "GCC" << "GCA" << "GCG" <<
+                                                          "TAT" << "TAC" << "TAA" << "TAG" << "CAT" << "CAC" << "CAA" << "CAG" <<
+                                                          "AAT" << "AAC" << "AAA" << "AAG" << "GAT" << "GAC" << "GAA" << "GAG" <<
+                                                          "TGT" << "TGC" << "TGA" << "TGG" << "CGT" << "CGC" << "CGA" << "CGG" <<
+                                                          "AGT" << "AGC" << "AGA" << "AGG" << "GGT" << "GGC" << "GGA" << "GGG";
+
 /// Constructor that takes a title string as well as a dna sequence string
 Sequence::Sequence( QString title , QString seq ) : title(title) , textSequence(seq)
 {
+    this->PopulateCodonDict();
     reverseComplement = this->_calculateReverseComplement();
     this->_findORFs(1);
     this->_countCodonsInORFs();
+
+
 }
 
 /// Gets the reverse complement of this DNA sequence
@@ -90,6 +102,8 @@ void Sequence::_findORFs( int minimumLength )
                 triple = reverseComplement.mid(currIndex , 3);
             }
 
+            triple = triple.toUpper();
+
             if(frame_in_orf[j]){
 
                 // Found STOP codon, writing ORF
@@ -107,6 +121,8 @@ void Sequence::_findORFs( int minimumLength )
                         {
                             frame_current_orf[j].frame = -j+2;
                         }
+
+                        // Convert to uppercase
 
                         mORFs.append(frame_current_orf[j]);
                         frame_current_orf[j] = ORF();
@@ -131,7 +147,7 @@ void Sequence::_findORFs( int minimumLength )
         }
     }
 
-  /*  qDebug() << "----------------";
+   /* qDebug() << "----------------";
     for(int k = 0; k < mORFs.length() ; k++ )
     {
         qDebug() << "ORF: " << mORFs[k].frame << " " << mORFs[k].text << " " << mORFs[k].startpos << " " << mORFs[k].endpos;
@@ -150,9 +166,24 @@ QString Sequence::ToString(){
     return s;
 }
 
+/// Adds all codons to dict before usage so that we get accurate zero counts
+void Sequence::PopulateCodonDict()
+{
+    for( int i=0; i < Sequence::mAllCodons.count(); i++){
+        mCodonOccurrences[ Sequence::mAllCodons[i] ] = 0;
+    }
+
+    /*qDebug() << "-----------";
+    for( auto key: mCodonOccurrences.keys() )
+    {
+        qDebug() << key << " : " << mCodonOccurrences.value(key);
+    }
+    qDebug() << "---------------";*/
+}
+
 /// Count codons inside ORFs
 void Sequence::_countCodonsInORFs(){
-    for( int i = 0; i < mORFs.length() ; i++ ){
+    for( int i = 0; i < mORFs.count() ; i++ ){
         int len = mORFs[i].text.length()/3;
 
         // Loop through ORF string and store codons in triples
